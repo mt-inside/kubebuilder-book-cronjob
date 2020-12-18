@@ -61,8 +61,7 @@ func (_ realClock) Now() time.Time { return time.Now() }
 // +kubebuilder:rbac:groups=batch,resources=jobs,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=batch,resources=jobs/status,verbs=get
 
-func (r *CronJobReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
-	ctx := context.Background()
+func (r *CronJobReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	log := r.Log.WithValues("cronjob", req.NamespacedName)
 
 	/* == Get our own spec == */
@@ -373,7 +372,7 @@ func constructJobForCronJob(cronJob *batchv1.CronJob, scheduledTime time.Time, r
 	return job, nil
 }
 
-func (r *CronJobReconciler) SetupWithManager(mgr ctrl.Manager) error {
+func (r *CronJobReconciler) SetupWithManager(ctx context.Context, mgr ctrl.Manager) error {
 	// make real clock wrapper, as this isn't a test
 	if r.Clock == nil {
 		r.Clock = realClock{}
@@ -383,9 +382,10 @@ func (r *CronJobReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	if err := mgr.
 		GetFieldIndexer().
 		IndexField(
+			ctx,
 			&kbatch.Job{},
 			jobOwnerKey,
-			func(rawObj runtime.Object) []string {
+			func(rawObj client.Object) []string {
 				// extract owner from the Job object
 				job := rawObj.(*kbatch.Job)
 				owner := metav1.GetControllerOf(job)
