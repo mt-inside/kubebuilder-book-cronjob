@@ -1,0 +1,3 @@
+domain: tutorial.kubebuilder.io
+repo: github.com/mt-inside/kubebuilder-book-cronjob
+version: "2"
