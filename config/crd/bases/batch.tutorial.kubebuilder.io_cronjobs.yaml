@@ -7090,7 +7090,11 @@ spec:
             - schedule
             type: object
           status:
-            description: CronJobStatus defines the observed state of CronJob
+            description: CronJobStatus defines the observed state of CronJob GOTCHA!
+              Defining this and putting it in the root struct does NOT give you a
+              Status, you need the +kubebuilder:subresource:status directive too.   without
+              it, you get confusing run-time errors from Status().Update about not
+              being able to find the CronJob object itself
             properties:
               active:
                 items:
@@ -7161,6 +7165,8 @@ spec:
         type: object
     served: true
     storage: true
+    subresources:
+      status: {}
 status:
   acceptedNames:
     kind: ""

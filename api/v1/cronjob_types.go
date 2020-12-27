@@ -56,6 +56,8 @@ const (
 )
 
 // CronJobStatus defines the observed state of CronJob
+// GOTCHA! Defining this and putting it in the root struct does NOT give you a Status, you need the +kubebuilder:subresource:status directive too.
+//   without it, you get confusing run-time errors from Status().Update about not being able to find the CronJob object itself
 type CronJobStatus struct {
 	// +optional
 	Active []corev1.ObjectReference `json:"active,omitempty"`
@@ -64,6 +66,7 @@ type CronJobStatus struct {
 }
 
 // +kubebuilder:object:root=true
+// +kubebuilder:subresource:status
 
 // CronJob is the Schema for the cronjobs API
 type CronJob struct {
@@ -75,7 +78,6 @@ type CronJob struct {
 }
 
 // +kubebuilder:object:root=true
-// +kubebuilder:subresource:status
 
 // CronJobList contains a list of CronJob
 type CronJobList struct {
