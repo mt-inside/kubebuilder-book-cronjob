@@ -85,7 +85,7 @@ func (r *CronJobReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 		return ctrl.Result{}, err
 	}
 
-	/* (re)build our Status - from the state of the world */
+	/* == (re)build our Status - from the state of the world == */
 
 	// lists to split into
 	var activeJobs []*kbatch.Job
@@ -144,14 +144,14 @@ func (r *CronJobReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 		}
 	}
 
-	// write status field
+	// iff there are children, update latest time
 	if mostRecentTime != nil {
 		cronJob.Status.LastScheduleTime = &metav1.Time{Time: *mostRecentTime}
 	} else {
 		cronJob.Status.LastScheduleTime = nil
 	}
 
-	// write status field
+	// build list of references to all active child Jobs, if any
 	cronJob.Status.Active = nil
 	for _, activeJob := range activeJobs {
 		jobRef, err := ref.GetReference(r.Scheme, activeJob) // a "reference" is a special thing? Get here == "make"
@@ -169,8 +169,9 @@ func (r *CronJobReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 		"failed jobs", len(failedJobs),
 	)
 
-	// push update
-	if err := r.Status().Update(ctx, &cronJob); err != nil {
+	// push update to Status subresource
+	// TODO: don't quite understand what this is doing? Assume the object we're setting the Status fields on isn't a "live" object; it's a DeepCopy used as a draft, and this is used to copy all the feilds to the real one?
+	if err := r.Status().Update(ctx, &cronJob); err != nil { // Status() returns a StatusWriter and is from StatusClient which is embedded in Client which is embedded in our reconciler struct
 		log.Error(err, "unable to update CronJob status")
 		return ctrl.Result{}, err
 	}

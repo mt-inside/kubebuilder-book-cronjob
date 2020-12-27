@@ -87,5 +87,7 @@ type CronJobList struct {
 }
 
 func init() {
+	// there's an apparent race here with main::init(), but
+	// recall that init()s are run in the order of which modules import which others
 	SchemeBuilder.Register(&CronJob{}, &CronJobList{})
 }
