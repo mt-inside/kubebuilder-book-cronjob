@@ -5,4 +5,4 @@ kind: Kustomization
 images:
 - name: controller
   newName: docker.io/mtinside/kubebuilder-book-cronjob
-  newTag: 0.0.1
+  newTag: latest

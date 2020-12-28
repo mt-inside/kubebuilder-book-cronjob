@@ -37,12 +37,16 @@ spec:
             description: CronJobSpec defines the desired state of CronJob
             properties:
               concurrencyPolicy:
+                description: strings are non-nullable, so for omission detection in
+                  all cases we'd need *string, but "" is hardly ever a sensible user-supplied
+                  value
                 enum:
                 - Allow
                 - Forbid
                 - Replace
                 type: string
               failedJobsHistoryLimit:
+                default: 1
                 format: int32
                 type: integer
               jobTemplate:
@@ -7081,9 +7085,11 @@ spec:
                 format: int64
                 type: integer
               successfulJobsHistoryLimit:
+                default: 3
                 format: int32
                 type: integer
               suspend:
+                default: false
                 type: boolean
             required:
             - jobTemplate

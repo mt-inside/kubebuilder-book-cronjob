@@ -32,17 +32,21 @@ type CronJobSpec struct {
 	// +optional
 	StartingDeadlineSeconds *int64 `json:"startingDeadlineSeconds,omitempty"`
 
+	// strings are non-nullable, so for omission detection in all cases we'd need *string, but "" is hardly ever a sensible user-supplied value
 	// +optional
 	ConcurrencyPolicy ConcurrencyPolicy `json:"concurrencyPolicy,omitempty"`
 
 	// +optional
+	// +kubebuilder:default:=false
 	Suspend *bool `json:"suspend,omitempty"`
 
 	JobTemplate batchv1beta1.JobTemplateSpec `json:"jobTemplate"`
 
 	// +optional
+	// +kubebuilder:default:=3
 	SuccessfulJobsHistoryLimit *int32 `json:"successfulJobsHistoryLimit,omitempty"`
 	// +optional
+	// +kubebuilder:default:=1
 	FailedJobsHistoryLimit *int32 `json:"failedJobsHistoryLimit,omitempty"`
 }
 
