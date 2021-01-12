@@ -74,8 +74,8 @@ type CronJobStatus struct {
 
 // CronJob is the Schema for the cronjobs API
 type CronJob struct {
-	metav1.TypeMeta   `json:",inline"`
-	metav1.ObjectMeta `json:"metadata,omitempty"`
+	metav1.TypeMeta   `json:",inline"`            // makes it a runtime.Object ?
+	metav1.ObjectMeta `json:"metadata,omitempty"` // makes it a metav1.Object ?
 
 	Spec   CronJobSpec   `json:"spec,omitempty"`
 	Status CronJobStatus `json:"status,omitempty"`
